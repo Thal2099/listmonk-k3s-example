@@ -1,0 +1,83 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: listmonk
+  namespace: listmonk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: listmonk
+  template:
+    metadata:
+      labels:
+        app: listmonk
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: listmonk-envs
+            - secretRef:
+                name: listmonk-secrets
+          image: listmonk/listmonk:latest
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: listmonk
+          ports:
+            - containerPort: 9000
+              name: http
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 5
+          volumeMounts:
+            - mountPath: /listmonk/uploads
+              name: uploads
+            - mountPath: /listmonk/config.toml
+              name: listmonk-config
+              subPath: config.toml
+            - mountPath: /tmp
+              name: tmp
+      initContainers:
+        - command:
+            - ./listmonk
+            - "--idempotent"
+            - "--upgrade"
+            - "--yes"
+          envFrom:
+            - configMapRef:
+                name: listmonk-envs
+            - secretRef:
+                name: listmonk-secrets
+          image: listmonk/listmonk:latest
+          name: migrations
+          volumeMounts:
+            - mountPath: /listmonk/uploads
+              name: uploads
+            - mountPath: /listmonk/config.toml
+              name: listmonk-config
+              subPath: config.toml
+      volumes:
+        - emptyDir: {}
+          name: tmp
+        - configMap:
+            defaultMode: 0400
+            name: listmonk-config
+            optional: false
+          name: listmonk-config
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: listmonk-uploads

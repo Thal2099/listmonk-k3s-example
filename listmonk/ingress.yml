@@ -1,0 +1,26 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.middlewares: default-redirect-https@kubernetescrd
+  name: listmonk
+  namespace: listmonk
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: newsletter.yourdomain.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: listmonk
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - newsletter.yourdomain.com
+      secretName: listmonk-tls

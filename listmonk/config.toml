@@ -1,0 +1,14 @@
+[app]
+address = "0.0.0.0:9000"
+root_url = "https://newsletter.yourdomain.com"
+site_name = "Your Newsletter"
+
+[db]
+host = "pg-listmonk-rw"
+port = 5432
+database = "listmonk"
+ssl_mode = "disable"
+max_open = 100
+max_idle = 50
+max_lifetime = "1h"
+params = "application_name=listmonk"

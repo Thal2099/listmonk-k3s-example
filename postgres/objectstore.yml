@@ -1,0 +1,22 @@
+---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: pg-listmonk
+  namespace: listmonk
+spec:
+  configuration:
+    data:
+      compression: bzip2
+    destinationPath: s3://newsletter-backups/postgres/
+    endpointURL: https://fsn1.your-objectstorage.com
+    s3Credentials:
+      accessKeyId:
+        key: ACCESS_KEY_ID
+        name: hetzner-blob-storage
+      secretAccessKey:
+        key: ACCESS_SECRET_KEY
+        name: hetzner-blob-storage
+    wal:
+      compression: bzip2
+  retentionPolicy: 7d

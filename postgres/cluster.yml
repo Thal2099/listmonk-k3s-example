@@ -1,0 +1,32 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: pg-listmonk
+  namespace: listmonk
+spec:
+  bootstrap:
+    initdb:
+      database: listmonk
+      owner: listmonk
+      secret:
+        name: postgres-listmonk
+  instances: 1
+  postgresql:
+    parameters:
+      effective_cache_size: 6144MB
+      maintenance_work_mem: 512MB
+      max_connections: "100"
+      shared_buffers: 2048MB
+      work_mem: 16MB
+  resources:
+    limits:
+      cpu: "2"
+      memory: 8Gi
+    requests:
+      cpu: "1"
+      memory: 4Gi
+  storage:
+    size: 40Gi
+  superuserSecret:
+    name: postgres-listmonk-superuser

